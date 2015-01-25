@@ -2,8 +2,8 @@
 
 # airtel.py
 # Finds Airtel Broadband usage and sends a notification to OS X's Notification Center.
-# exchequer598@gmail.com
-# MIT
+# (C) 2015 - GP (exchequer598@gmail.com)
+# https://github.com/paambaati/airtel-usage
 
 import urllib2
 import sys

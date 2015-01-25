@@ -7,10 +7,15 @@
 
 import urllib2
 import sys
+import syslog
+import traceback
+from os import path
 from subprocess import Popen, PIPE, call
 from plistlib import readPlist
 
 # Global variables.
+AppId = 'com.gp.airtel'
+AppVersion = '1.1'
 AirportPath = '/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport'
 AirtelSmartbytesUrl = 'http://122.160.230.125:8080/gbod/gb_on_demand.do'
 HomeSsid = 'YellPenisForPassword'
@@ -19,13 +24,20 @@ NotificationImage = 'airtel.png'
 NotificationSound = 'default'
 
 
+def writeLog(message, level=syslog.LOG_ALERT):
+    """
+    Writes log messages to OS X's Console.
+    """
+    syslog.syslog(level, AppId + ' ' + AppVersion + ' :: ' + str(message))
+
+
 def getUsage(url):
     """
     Sends a request to `AirtelSmartbytesUrl`, hack-parses for
     quota, data limit and days left and returns them.
     """
-    response = urllib2.urlopen(url)
-    data = response.read()
+    request = urllib2.urlopen(url)
+    data = request.read()
     quota = data.split('<li>Balance quota:&nbsp;&nbsp;&nbsp;')[1].split(
         '</li>')[0].replace('&nbsp;', ' ')
     limit = data.split('<li>High speed data limit:&nbsp;&nbsp;&nbsp;')[
@@ -63,12 +75,31 @@ def sendNotification(title, subtitle, message):
     NOTE 1: Needs `terminal-notifier` to be installed. Install with `brew install terminal-notifier`.
     NOTE 2: Will work only on OS X.
     """
-    call(['terminal-notifier', '-group', 'airtel-usage', '-title', title, '-subtitle', subtitle, '-message', message,
+    call(['/usr/local/bin/terminal-notifier', '-group', 'airtel-usage', '-title', title, '-subtitle', subtitle, '-message', message,
           '-contentImage', NotificationImage, '-sender', 'com.apple.notificationcenterui', '-sound', NotificationSound])
 
 # Main
-if(HomeSsid == getWifiSSID()):
-    usage = getUsage(AirtelSmartbytesUrl)
-    subtitle = '{0} of {1} remaining'.format(usage['quota'], usage['limit'])
-    message = '{0} days remaining until cycle ends.'.format(usage['days_left'])
-    sendNotification(NotificationTitle, subtitle, message)
+syslog.openlog('Python')
+try:
+    NotificationImage = path.join(
+        path.dirname(path.realpath(__file__)), NotificationImage)
+    writeLog('App started! Trying to get WiFi SSID now...')
+    ssid = getWifiSSID()
+    writeLog('WiFi SSID is ' + ssid)
+    if(HomeSsid == ssid):
+        writeLog('Home WiFi! Trying to find Airtel usage now...')
+        usage = getUsage(AirtelSmartbytesUrl)
+        writeLog('Found usage!')
+        writeLog(usage)
+        subtitle = '{0} of {1} remaining'.format(
+            usage['quota'], usage['limit'])
+        message = '{0} days remaining until cycle ends.'.format(
+            usage['days_left'])
+        writeLog('Sending notification now...')
+        sendNotification(NotificationTitle, subtitle, message)
+        writeLog('Woot! All done!')
+    else:
+        writeLog('Oops! Not on Home WiFi. Exiting...')
+except:
+    writeLog('UNEXPECTED EXCEPTION!')
+    writeLog(traceback.format_exc(), syslog.LOG_CRIT)

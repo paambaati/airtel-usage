@@ -7,9 +7,21 @@ Python script that finds your Airtel Broadband usage and sends a notification to
 
 #### Notes
 1. Tested only on OS X Yosemite 10.10.1
+2. The script can be run on startup. To do that, 
+    1. Copy `com.gp.airtel.plist` to`~/Library/LaunchAgents`
+    2. Run `launchctl load ~/Library/LaunchAgents/com.gp.airtel.plist`
+    3. Run `launchctl start com.gp.airtel`
+    4. Restart and check if it runs on boot.
 
 #### Changelog
-`1.0 (25 January 2015)`
+
+__1.1 (25 January 2015)__
+
+`+ Support for logging to OS X Console.`
+
+`+ Added optional PLIST for running script as LaunchAgent.`
+
+__1.0 (25 January 2015)__
 
 `+ Initial release.`
   

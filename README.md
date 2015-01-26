@@ -8,6 +8,10 @@ Python script that finds your Airtel Broadband usage and sends a notification to
 1. OS X.
 2. [terminal-notifier](https://github.com/alloy/terminal-notifier). You can install this using `brew install terminal-notifier`.
 
+#### Usage
+1. Clone this repo into a directory of your choice using the command `git clone https://github.com/paambaati/airtel-usage.git`
+2. Navigate into the clone's directory and simply run `python airtel.py`.
+
 #### Notes
 1. Tested only on OS X Yosemite 10.10.1
 2. The script can be run on startup. To do that,

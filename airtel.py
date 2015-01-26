@@ -28,7 +28,7 @@ def writeLog(message, level=syslog.LOG_ALERT):
     """
     Writes log messages to OS X's Console.
     """
-    syslog.syslog(level, AppId + ' ' + AppVersion + ' :: ' + str(message))
+    syslog.syslog(level, str(message))
 
 
 def getUsage(url):
@@ -79,7 +79,7 @@ def sendNotification(title, subtitle, message):
           '-contentImage', NotificationImage, '-sender', 'com.apple.notificationcenterui', '-sound', NotificationSound])
 
 # Main
-syslog.openlog('Python')
+syslog.openlog(AppId + ' ' + AppVersion)
 try:
     NotificationImage = path.join(
         path.dirname(path.realpath(__file__)), NotificationImage)

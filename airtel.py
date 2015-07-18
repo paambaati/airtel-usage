@@ -15,7 +15,7 @@ from plistlib import readPlist
 
 # Global variables.
 AppId = 'com.gp.airtel'
-AppVersion = '1.1'
+AppVersion = '1.2'
 AirportPath = '/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport'
 AirtelSmartbytesUrl = 'http://122.160.230.125:8080/gbod/gb_on_demand.do'
 HomeSsid = 'YellPenisForPassword'
@@ -38,12 +38,10 @@ def getUsage(url):
     """
     request = urllib2.urlopen(url)
     data = request.read()
-    quota = data.split('<li>Balance quota:&nbsp;&nbsp;&nbsp;')[1].split(
-        '</li>')[0].replace('&nbsp;', ' ')
-    limit = data.split('<li>High speed data limit:&nbsp;&nbsp;&nbsp;')[
-        1].split('</li>')[0].replace('&nbsp;', ' ')
-    days_left = data.split(
-        '<li>No. of days left in the current bill cycle:&nbsp;&nbsp;&nbsp;')[1].split('</li>')[0]
+    limit = data.split('Plan Quota :<span>')[1].split('</span>')[0]
+    quota = data.split('with: ')[1].split('<span>')[1].split('</span>')[0]
+    print quota
+    days_left = data.split('current bill cycle:')[1].split('<span>')[1].split('</span>')[0]
     return {'quota': quota, 'limit': limit, 'days_left': days_left}
 
 

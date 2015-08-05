@@ -40,7 +40,6 @@ def getUsage(url):
     data = request.read()
     limit = data.split('Plan Quota :<span>')[1].split('</span>')[0]
     quota = data.split('with: ')[1].split('<span>')[1].split('</span>')[0]
-    print quota
     days_left = data.split('current bill cycle:')[1].split('<span>')[1].split('</span>')[0]
     return {'quota': quota, 'limit': limit, 'days_left': days_left}
 
